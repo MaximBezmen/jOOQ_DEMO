@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.1</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.jooq.demo</groupId>
+	<artifactId>jooq-demo</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>jOOQ_DEMO</name>
+	<description>jOOQ_DEMO</description>
+	<properties>
+		<java.version>16</java.version>
+		<mapstruct.version>1.5.1.Final</mapstruct.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+<!--		JOOQ-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jooq</artifactId>
+		</dependency>
+<!--				JOOQ-->
+
+<!--		postgresql-->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+<!--		postgresql-->
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>generate-jooq-dev</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jooq</groupId>
+						<artifactId>jooq-codegen-maven</artifactId>
+						<executions>
+							<execution>
+								<id>java-generator</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+								<configuration>
+									<jdbc>
+										<!--suppress UnresolvedMavenProperty -->
+										<url>${db.url}</url>
+										<!--suppress UnresolvedMavenProperty -->
+										<user>${db.user}</user>
+										<!--suppress UnresolvedMavenProperty -->
+										<password>${db.password}</password>
+									</jdbc>
+									<generator>
+										<database>
+											<inputSchema>public</inputSchema>
+										</database>
+										<target>
+											<packageName>com.jooq-demo.jooq</packageName>
+											<directory>target/generated-sources</directory>
+										</target>
+									</generator>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-maven-plugin</artifactId>
+						<configuration>
+							<propertyFile>src/main/resources/liquibase-dev.properties</propertyFile>
+							<changeLogFile>src/main/resources/changelog/db.changelog.master.xml</changeLogFile>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>generate-jooq-local</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jooq</groupId>
+						<artifactId>jooq-codegen-maven</artifactId>
+						<executions>
+							<execution>
+								<id>java-generator-1</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+								<configuration>
+									<jdbc>
+										<!--suppress UnresolvedMavenProperty -->
+										<url>${db.url}</url>
+										<!--suppress UnresolvedMavenProperty -->
+										<user>${db.user}</user>
+										<!--suppress UnresolvedMavenProperty -->
+										<password>${db.password}</password>
+									</jdbc>
+									<generator>
+										<database>
+<!--											The schema that is used locally as a source for meta information.-->
+											<inputSchema>public</inputSchema>
+										</database>
+										<target>
+<!--											The destination package of your generated classes-->
+											<packageName>com.adstore.jooq</packageName>
+											<!--The destination directory of your generated classes -->
+											<directory>target/generated-sources</directory>
+										</target>
+
+
+<!--				multi schema						-->
+<!--										<database>-->
+<!--										<schemata>-->
+<!--											<schema>-->
+<!--												<inputSchema>pg_catalog</inputSchema>-->
+<!--											</schema>-->
+<!--											<schema>-->
+<!--												<inputSchema>public</inputSchema>-->
+<!--											</schema>-->
+<!--										</schemata>-->
+<!--										</database>-->
+									</generator>
+
+								</configuration>
+							</execution>
+<!--							<execution>-->
+<!--								<id>java-generator-2</id>-->
+<!--								<phase>generate-sources</phase>-->
+<!--								<goals>-->
+<!--									<goal>generate</goal>-->
+<!--								</goals>-->
+<!--								<configuration>-->
+<!--									<jdbc>-->
+<!--										&lt;!&ndash;suppress UnresolvedMavenProperty &ndash;&gt;-->
+<!--										<url>${db.url}</url>-->
+<!--										&lt;!&ndash;suppress UnresolvedMavenProperty &ndash;&gt;-->
+<!--										<user>${db.user}</user>-->
+<!--										&lt;!&ndash;suppress UnresolvedMavenProperty &ndash;&gt;-->
+<!--										<password>${db.password}</password>-->
+<!--									</jdbc>-->
+<!--									<generator>-->
+<!--										<database>-->
+<!--											&lt;!&ndash;											The schema that is used locally as a source for meta information.&ndash;&gt;-->
+<!--											<inputSchema>pg_catalog</inputSchema>-->
+<!--										</database>-->
+<!--										<target>-->
+<!--											&lt;!&ndash;											The destination package of your generated classes&ndash;&gt;-->
+<!--											<packageName>com.adstore.test</packageName>-->
+<!--											&lt;!&ndash;The destination directory of your generated classes &ndash;&gt;-->
+<!--											<directory>target/generated-sources/test</directory>-->
+<!--										</target>-->
+
+
+<!--										&lt;!&ndash;				multi schema						&ndash;&gt;-->
+<!--										&lt;!&ndash;										<database>&ndash;&gt;-->
+<!--										&lt;!&ndash;										<schemata>&ndash;&gt;-->
+<!--										&lt;!&ndash;											<schema>&ndash;&gt;-->
+<!--										&lt;!&ndash;												<inputSchema>pg_catalog</inputSchema>&ndash;&gt;-->
+<!--										&lt;!&ndash;											</schema>&ndash;&gt;-->
+<!--										&lt;!&ndash;											<schema>&ndash;&gt;-->
+<!--										&lt;!&ndash;												<inputSchema>public</inputSchema>&ndash;&gt;-->
+<!--										&lt;!&ndash;											</schema>&ndash;&gt;-->
+<!--										&lt;!&ndash;										</schemata>&ndash;&gt;-->
+<!--										&lt;!&ndash;										</database>&ndash;&gt;-->
+<!--									</generator>-->
+<!--								</configuration>-->
+<!--							</execution>-->
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-maven-plugin</artifactId>
+						<configuration>
+							<propertyFile>src/main/resources/liquibase.properties</propertyFile>
+							<changeLogFile>src/main/resources/changelog/db.changelog.master.xml</changeLogFile>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
